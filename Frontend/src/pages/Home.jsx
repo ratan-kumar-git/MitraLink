@@ -37,11 +37,6 @@ const Home = () => {
           >
             Start Chatting
           </Link>
-
-          <div className="mt-8 text-gray-300 text-sm">
-            Home Page under construction ... <br />
-            Coming soon !!
-          </div>
         </div>
       </div>
 
