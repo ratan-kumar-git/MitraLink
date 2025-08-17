@@ -59,7 +59,7 @@ const ChatContainer = () => {
 
   return (
     <div
-      className="h-full flex flex-col overflow-auto bg-cover bg-center"
+      className="h-[calc(100vh-64px)] flex flex-col overflow-auto bg-cover bg-center"
       style={{ backgroundImage: `url(${isDark ? chat_bg_dark_img : chat_bg_img})` }}
     >
       <ChatHeader />

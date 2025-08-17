@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
+import avatarImg from '../assets/avatar.webp';
 
 const MyProfile = () => {
   const { authUser, isUpdaetingProfile, updateProfile } = useAuthStore();
@@ -33,7 +34,7 @@ const MyProfile = () => {
         <div className="flex flex-col items-center gap-2">
           <div className="relative">
             <img
-              src={selectedImg || authUser.profilePic || "/avatar.webp"}
+              src={selectedImg || authUser.profilePic || avatarImg}
               alt="Profile"
               className="size-32 rounded-full object-cover border-4 "
             />
