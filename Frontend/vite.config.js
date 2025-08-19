@@ -18,12 +18,12 @@ export default defineConfig({
         theme_color: "#1a1a1a",
         icons: [
           {
-            src: "/mitrLink.webp",
+            src: "/mitrLink-192.webp",
             sizes: "192x192",
             type: "image/webp"
           },
           {
-            src: "/mitrLink.webp",
+            src: "/mitrLink-512.webp",
             sizes: "512x512",
             type: "image/webp"
           }

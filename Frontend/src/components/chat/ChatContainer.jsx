@@ -13,6 +13,7 @@ import chat_bg_dark_img from "../../assets/chat_bg_dark.webp";
 const ChatContainer = () => {
 
   const [isDark, setIsDark] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const {
     messages,
     getMessages,
@@ -21,7 +22,7 @@ const ChatContainer = () => {
     subscribeToMessages,
     unsubscribeFromMessages,
   } = useChatStore();
-  const { authUser } = useAuthStore();
+  const { authUser, socket } = useAuthStore();
   const messageEndRef = useRef(null);
 
   useEffect(() => {
@@ -35,17 +36,48 @@ const ChatContainer = () => {
     unsubscribeFromMessages,
   ]);
 
+  // scroll to the last msg
   useEffect(() => {
     if (messageEndRef.current && messages) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
+  // for light/dark mode 
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setIsDark(true);
     }
   }, []);
+
+  // for typing indicator
+  useEffect(() => {
+    let typingTimeout;
+
+    socket.on("typing", ({ senderId }) => {
+      if (senderId === selectedUser._id) {
+        setIsTyping(true);
+
+        // auto-stop after 3 seconds
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => setIsTyping(false), 500);
+      }
+    });
+
+    socket.on("stopTyping", ({ senderId }) => {
+      if (senderId === selectedUser._id) {
+        setIsTyping(false);
+        clearTimeout(typingTimeout);
+      }
+    });
+
+    return () => {
+      socket.off("typing");
+      socket.off("stopTyping");
+      clearTimeout(typingTimeout);
+    };
+  }, [selectedUser]);
+
 
   if (isMessagesLoading) {
     return (
@@ -62,7 +94,7 @@ const ChatContainer = () => {
       className="h-[calc(100vh-64px)] flex flex-col overflow-auto bg-cover bg-center"
       style={{ backgroundImage: `url(${isDark ? chat_bg_dark_img : chat_bg_img})` }}
     >
-      <ChatHeader />
+      <ChatHeader isTyping={isTyping} />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, idx) => (
           <div
@@ -102,7 +134,7 @@ const ChatContainer = () => {
         ))}
       </div>
 
-      <MessageInput />
+      <MessageInput senderId={authUser._id} receiverId={selectedUser._id} />
     </div>
   );
 };

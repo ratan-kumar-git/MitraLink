@@ -2,12 +2,15 @@ import React, { useRef, useState } from "react";
 import { useChatStore } from "../../store/useChatStore";
 import { Image, Loader, Loader2, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuthStore } from "../../store/useAuthStore";
 
-const MessageInput = () => {
+const MessageInput = ({ senderId, receiverId }) => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
   const { sendMessage, isSendMessage } = useChatStore();
+  const { socket } = useAuthStore();
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0]
@@ -47,6 +50,16 @@ const MessageInput = () => {
     }
   };
 
+  const handleTyping = (e) => {
+    setText(e.target.value);
+
+    if (e.target.value.length > 0) {
+      socket.emit("typing", { senderId, receiverId });
+    } else {
+      socket.emit("stopTyping", { senderId, receiverId });
+    }
+  };
+
   return (
     <div className="p-4 w-full">
       {imagePreview && (
@@ -76,7 +89,7 @@ const MessageInput = () => {
             className="w-full rounded-full px-4 py-0.5 outline-none"
             placeholder="Type a message..."
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={handleTyping}
           />
           <input
             type="file"
