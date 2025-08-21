@@ -45,10 +45,7 @@ It supports **private & group messaging**, media sharing, typing indicators, mes
 - Cloudinary (media upload)
 
 ## 📸 Screenshots
-
 ### Mobile view
-## 📸 Screenshots
-
 <p align="center">
   <img src="./screenshots/signup.jpg" alt="Signup" width="220"/>
   <img src="./screenshots/login.jpg" alt="Login" width="220"/>
@@ -66,8 +63,7 @@ It supports **private & group messaging**, media sharing, typing indicators, mes
   <img src="./screenshots/profile.jpg" alt="Profile" width="220"/>
 </p>
 
-
-### Laptop View
+### Desktop View
 - Signup Page
 ![Chat UI](./screenshots/signup1.png)
 - Login Page
