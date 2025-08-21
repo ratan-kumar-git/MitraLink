@@ -1,12 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  Facebook,
-  Github,
-  Instagram,
-  Twitter,
-  TwitterIcon,
-} from "lucide-react";
 import tricolrImg from "../assets/tricolr.webp";
 
 const Home = () => {
@@ -14,7 +7,7 @@ const Home = () => {
     <>
       {/* Hero Section */}
       <div
-        className="h-[calc(100vh-64px)] w-full flex flex-col justify-center items-center gap-6 bg-cover bg-center relative"
+        className="h-[calc(100vh)] w-full flex flex-col justify-center items-center gap-6 bg-cover bg-center relative"
         style={{ backgroundImage: `url(${tricolrImg})` }}
       >
         {/* Dark overlay */}
