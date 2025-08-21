@@ -27,6 +27,8 @@ io.on("connection", (socket) => {
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
+  // ============ 1-to-1 chat ============
+
   socket.on("typing", ({ senderId, receiverId }) => {
     const receiverSocketId = userSocketMap[receiverId];
     if (receiverSocketId) {
@@ -51,6 +53,30 @@ io.on("connection", (socket) => {
     io.emit("message:status", { messageId, status: "seen" });
   });
 
+  // ============ Group Chat ============
+
+  // join a group room
+  socket.on("joinGroup", (groupId) => {
+    socket.join(groupId);
+    console.log(`User ${userId} joined group ${groupId}`);
+  });
+
+  // send message to group
+  socket.on("group:sendMessage", async ({ groupId, message }) => {
+    // here message already saved in API, so just broadcast
+    io.to(groupId).emit("group:newMessage", message);
+  });
+
+  // group typing
+  socket.on("group:typing", ({ groupId, senderId }) => {
+    socket.to(groupId).emit("group:typing", { senderId });
+  });
+
+  socket.on("group:stopTyping", ({ groupId, senderId }) => {
+    socket.to(groupId).emit("group:stopTyping", { senderId });
+  });
+
+  // ============ Disconnect ============
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
     delete userSocketMap[userId];

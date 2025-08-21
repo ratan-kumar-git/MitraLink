@@ -116,16 +116,10 @@ export const sendGroupMessages = async (req, res) => {
     });
     await newMessage.save();
 
-    // populate sender details properly
     const newMessageData = await newMessage.populate(
       "senderId",
       "_id fullName email profilePic"
     );
-
-    // const receiverSocketId = getReceiverSocketId(receiverId);
-    // if (receiverSocketId) {
-    //   io.to(receiverSocketId).emit("newMessage", newMessage);
-    // }
 
     res.status(200).json(newMessageData);
   } catch (error) {

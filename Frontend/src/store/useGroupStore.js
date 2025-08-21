@@ -11,7 +11,14 @@ export const useGroupStore = create((set, get) => ({
   isGroupLoading: false,
   isGroupMessagesLoading: false,
   isSendMessage: false,
-  setSelectedGroup: (selectedGroup) => set({ selectedGroup }),
+  setSelectedGroup: (selectedGroup) => {
+    set({ selectedGroup });
+
+    const { socket } = useAuthStore.getState();
+    if (socket && selectedGroup?._id) {
+      socket.emit("joinGroup", selectedGroup._id);
+    }
+  },
 
   getGroups: async () => {
     set({ isGroupLoading: true });
@@ -42,6 +49,8 @@ export const useGroupStore = create((set, get) => ({
 
   sendGroupMessages: async ({ text, image }) => {
     const { selectedGroup, groupMessages } = get();
+    const { socket } = useAuthStore.getState();
+
     if (!selectedGroup) {
       toast.error("No group selected");
       return;
@@ -53,10 +62,12 @@ export const useGroupStore = create((set, get) => ({
         { text, image }
       );
 
-      set({
-        groupMessages: [...groupMessages, res.data],
-        isSendMessage: false,
+      socket?.emit("group:sendMessage", {
+        groupId: selectedGroup._id,
+        message: res.data,
       });
+
+      set({isSendMessage: false})
     } catch (error) {
       toast.error(error.response.data.message || "Failed to send message");
     } finally {
@@ -77,5 +88,20 @@ export const useGroupStore = create((set, get) => ({
     } finally {
       set({ isGroupMessagesLoading: false });
     }
-  }
+  },
+
+  initGroupSocketListener: () => {
+    const { socket } = useAuthStore.getState();
+    if (!socket) return;
+
+    socket.off("group:newMessage");
+    socket.on("group:newMessage", (message) => {
+      const { selectedGroup } = get();
+      if (selectedGroup?._id === message.groupId) {
+        set((state) => ({
+          groupMessages: [...state.groupMessages, message],
+        }));
+      }
+    });
+  },
 }));

@@ -28,7 +28,7 @@ const MessageStatus = ({ status = "sent", className = "" }) => {
 
 const GroupChatContainer = () => {
   const [isDark, setIsDark] = useState(false);
-  const { authUser, socket } = useAuthStore();
+  const { authUser } = useAuthStore();
   const {
     groupMessages,
     selectedGroup,
@@ -39,6 +39,7 @@ const GroupChatContainer = () => {
 
   useEffect(() => {
     getGroupMessage(selectedGroup._id);
+    useGroupStore.getState().initGroupSocketListener();
   }, [selectedGroup._id, getGroupMessage]);
 
   // scroll to the last msg
@@ -54,7 +55,6 @@ const GroupChatContainer = () => {
       setIsDark(true);
     }
   }, []);
-
 
   if (isGroupMessagesLoading) {
     return (
