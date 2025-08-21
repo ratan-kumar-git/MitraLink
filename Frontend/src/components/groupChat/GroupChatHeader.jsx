@@ -1,10 +1,17 @@
 import { X } from "lucide-react";
 import React from "react";
-import avatarImg from '../../assets/avatar.webp';
+import avatarImg from "../../assets/avatar.webp";
 import { useGroupStore } from "../../store/useGroupStore";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const GroupChatHeader = () => {
-    const { groupDetails, setSelectedGroup } = useGroupStore()
+  const { groupDetails, setSelectedGroup, typingUsers, selectedGroup } =
+    useGroupStore();
+  const { authUser } = useAuthStore();
+
+  const groupTyping = typingUsers[selectedGroup?._id] || [];
+  const othersTyping = groupTyping.filter((id) => id !== authUser._id);
+
   return (
     <div className="p-2.5 border-b sticky top-0 z-10 bg-zinc-100 dark:bg-gray-800">
       <div className="flex items-center justify-between">
@@ -22,6 +29,12 @@ const GroupChatHeader = () => {
           {/* User info */}
           <div>
             <h3 className="font-medium">{groupDetails.name}</h3>
+            <p className="text-sm text-base-content/70">
+              {othersTyping.length > 0 &&
+                (othersTyping.length === 1
+                  ? "Someone is typing..."
+                  : "Multiple people are typing...")}
+            </p>
           </div>
         </div>
 

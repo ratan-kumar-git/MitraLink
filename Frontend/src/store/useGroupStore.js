@@ -11,6 +11,8 @@ export const useGroupStore = create((set, get) => ({
   isGroupLoading: false,
   isGroupMessagesLoading: false,
   isSendMessage: false,
+  typingUsers: {},
+
   setSelectedGroup: (selectedGroup) => {
     set({ selectedGroup });
 
@@ -94,6 +96,26 @@ export const useGroupStore = create((set, get) => ({
     const { socket } = useAuthStore.getState();
     if (!socket) return;
 
+    socket.off("group:typing");
+    socket.off("group:stopTyping");
+
+    socket.on("group:typing", ({ groupId, senderId }) => {
+      set((state) => {
+        const prev = state.typingUsers[groupId] || [];
+        if (!prev.includes(senderId)) {
+          return { typingUsers: { ...state.typingUsers, [groupId]: [...prev, senderId] } };
+        }
+        return state;
+      });
+    });
+
+    socket.on("group:stopTyping", ({ groupId, senderId }) => {
+      set((state) => {
+        const prev = state.typingUsers[groupId] || [];
+        return { typingUsers: { ...state.typingUsers, [groupId]: prev.filter((id) => id !== senderId) } };
+      });
+    });
+
     socket.off("group:newMessage");
     socket.on("group:newMessage", (message) => {
       const { selectedGroup } = get();
@@ -103,5 +125,17 @@ export const useGroupStore = create((set, get) => ({
         }));
       }
     });
+  },
+
+  sendTyping: (groupId) => {
+    const { socket } = useAuthStore.getState();
+    const { authUser } = useAuthStore.getState();
+    socket?.emit("group:typing", { groupId, senderId: authUser._id });
+  },
+
+  stopTyping: (groupId) => {
+    const { socket } = useAuthStore.getState();
+    const { authUser } = useAuthStore.getState();
+    socket?.emit("group:stopTyping", { groupId, senderId: authUser._id });
   },
 }));

@@ -69,11 +69,11 @@ io.on("connection", (socket) => {
 
   // group typing
   socket.on("group:typing", ({ groupId, senderId }) => {
-    socket.to(groupId).emit("group:typing", { senderId });
+    socket.to(groupId).emit("group:typing", { groupId, senderId });
   });
 
   socket.on("group:stopTyping", ({ groupId, senderId }) => {
-    socket.to(groupId).emit("group:stopTyping", { senderId });
+    socket.to(groupId).emit("group:stopTyping", { groupId, senderId });
   });
 
   // ============ Disconnect ============

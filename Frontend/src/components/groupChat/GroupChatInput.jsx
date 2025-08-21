@@ -2,15 +2,15 @@ import React, { useRef, useState } from "react";
 import { Image, Loader, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useGroupStore } from "../../store/useGroupStore";
+import { useAuthStore } from "../../store/useAuthStore";
 
 
 const GroupChatInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
-  const { isSendMessage, sendGroupMessages } = useGroupStore()
-
-
+  const { selectedGroup, isSendMessage, sendGroupMessages, sendTyping, stopTyping } = useGroupStore()
+  const typingTimeoutRef = useRef(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0]
@@ -50,9 +50,19 @@ const GroupChatInput = () => {
     }
   };
 
-  const handleTyping = (e) => {
-    setText(e.target.value);
-  };
+const handleTyping = (e) => {
+  setText(e.target.value);
+
+  if (selectedGroup) {
+    sendTyping(selectedGroup._id);
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      stopTyping(selectedGroup._id);
+    }, 500);
+  }
+};
 
   return (
     <div className="p-4 w-full">
