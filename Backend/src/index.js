@@ -6,6 +6,7 @@ import cors from "cors";
 // import file
 import authRoutes from "./routes/authRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import groupRoutes from './routes/groupRoutes.js';
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
 
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/group", groupRoutes);
 
 // routes
 app.get("/", (req, res) => {

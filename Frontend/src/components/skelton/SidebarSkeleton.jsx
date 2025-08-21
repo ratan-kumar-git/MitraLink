@@ -2,12 +2,12 @@ import { LucideMessagesSquare, UserCircle, Users } from 'lucide-react';
 import React from 'react'
 import { Link } from 'react-router-dom';
 
-const SidebarSkeleton = ({selectedUser}) => {
+const SidebarSkeleton = ({selectedUser, selectedGroup}) => {
     // Create 8 skeleton items
     const skeletonContacts = Array(8).fill(null);
     return (
         <aside
-            className={`h-full w-full sm:w-72 border-r border-base-300 flex sm:flex flex-col transition-all duration-200 ${selectedUser ? "hidden" : ""}`}
+            className={`h-full w-full sm:w-72 border-r border-base-300 flex sm:flex flex-col transition-all duration-200 ${(selectedUser || selectedGroup) ? "hidden" : ""}`}
         >
             {/* Skeleton Contacts */}
             <div className="overflow-y-auto w-full py-3">

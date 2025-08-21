@@ -1,23 +1,42 @@
-import React from 'react'
-import BaseLayout from '../components/layout/BaseLayout'
-import SidebarLayout from '../components/layout/SidebarLayout'
+import React, { useEffect } from "react";
+import BaseLayout from "../components/layout/BaseLayout";
+import SidebarLayout from "../components/layout/SidebarLayout";
+import GroupList from "../components/GroupList";
+import { useGroupStore } from "../store/useGroupStore";
+import NoChatSelected from "../components/skelton/NoChatSelected";
+import GroupChatContainer from "../components/groupChat/GroupChatContainer";
+import { useChatStore } from "../store/useChatStore";
 
 const Group = () => {
-  return (
-    <BaseLayout sidebar={(
-      <SidebarLayout content={(
-        <>
-          <h1 className='pt-10 text-center text-lg font-semibold'>Comming Soon !!</h1>
-          <p className='pt-1 text-center text-base font-semibold'>Work under process...</p>
-        </>
-      )} />
-    )} content={
-    <div className='bg-zinc-200 dark:bg-gray-900 h-screen hidden sm:block'>
-      <h1 className='pt-10 text-center text-lg font-semibold'>Comming Soon !!</h1>
-      <p className='pt-1 text-center text-base font-semibold'>Work under process...</p>
-    </div>
-    }/>
-  )
-}
+  const { groups, selectedGroup, setSelectedGroup, getGroups, createGroup } =
+    useGroupStore();
+  const { users, getUsers } = useChatStore();
 
-export default Group
+  useEffect(() => {
+    getUsers();
+    getGroups();
+  }, [getUsers, getGroups]);
+
+  return (
+    <BaseLayout
+      // sidebar
+      sidebar={
+        <SidebarLayout
+          content={
+            <GroupList
+              groups={groups}
+              selectedGroup={selectedGroup}
+              setSelectedGroup={setSelectedGroup}
+              allUsers={users}
+              createGroup={createGroup}
+            />
+          }
+        />
+      }
+      // content
+      content={!selectedGroup ? <NoChatSelected /> : <GroupChatContainer />}
+    />
+  );
+};
+
+export default Group;

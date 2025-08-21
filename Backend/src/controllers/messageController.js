@@ -93,3 +93,43 @@ export const sendMessages = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const sendGroupMessages = async (req, res) => {
+  try {
+    const { text, image } = req.body;
+    const groupId = req.params.groupId;
+    const senderId = req.user._id;
+
+    // upload base64 image to cloudinary
+    let imageUrl;
+    if (image) {
+      const uploadResponse = await cloudinary.uploader.upload(image);
+      imageUrl = uploadResponse.secure_url;
+    }
+
+    // create new message
+    const newMessage = new Message({
+      senderId,
+      groupId,
+      text,
+      image: imageUrl,
+    });
+    await newMessage.save();
+
+    // populate sender details properly
+    const newMessageData = await newMessage.populate(
+      "senderId",
+      "_id fullName email profilePic"
+    );
+
+    // const receiverSocketId = getReceiverSocketId(receiverId);
+    // if (receiverSocketId) {
+    //   io.to(receiverSocketId).emit("newMessage", newMessage);
+    // }
+
+    res.status(200).json(newMessageData);
+  } catch (error) {
+    console.log("Error in sendMessages: ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

@@ -3,16 +3,18 @@ import { NavLink } from 'react-router-dom'
 import { LucideMessagesSquare, UserCircle, Users } from 'lucide-react'
 import { useChatStore } from "../../store/useChatStore";
 import SidebarSkeleton from '../skelton/SidebarSkeleton';
+import { useGroupStore } from '../../store/useGroupStore';
 
 const SidebarLayout = ({content}) => {
   const { selectedUser, isUserLoading } = useChatStore();
+  const { selectedGroup, isGroupLoading } = useGroupStore()
 
-  if (isUserLoading) {
-    return <SidebarSkeleton selectedUser={selectedUser} />;
+  if (isUserLoading || isGroupLoading) {
+    return <SidebarSkeleton selectedUser={selectedUser} selectedGroup={selectedGroup} />;
   }
 
   return (
-    <aside className={`h-[calc(100vh-64px)] w-full sm:w-72 border-r bg-slate-50 dark:bg-slate-800 flex sm:flex flex-col transition-all duration-200 ${selectedUser ? "hidden" : ""}`}>
+    <aside className={`h-[calc(100vh-64px)] w-full sm:w-72 border-r bg-slate-50 dark:bg-slate-800 flex sm:flex flex-col transition-all duration-200 ${(selectedUser || selectedGroup) ? "hidden" : ""}`}>
       <div className="flex-1 overflow-y-auto w-full">
         {content}
       </div>

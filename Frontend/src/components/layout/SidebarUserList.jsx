@@ -62,7 +62,6 @@ const SidebarUserList = ({
             )}
           </div>
 
-          {/* User info - only visible on larger screens */}
           <div className="text-left w-full">
             <div className="font-medium truncate">{user.fullName}</div>
             <div className="flex items-center justify-between">

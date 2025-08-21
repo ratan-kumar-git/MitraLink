@@ -10,7 +10,10 @@ const messageShema = new mongoose.Schema(
     receiverId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+    },
+    groupId: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "Group" 
     },
     text: {
       type: String,
@@ -18,14 +21,14 @@ const messageShema = new mongoose.Schema(
     image: {
       type: String,
     },
-    status: { 
-      type: String, 
-      enum: ["sent", "delivered", "seen"], 
-      default: "sent" 
+    status: {
+      type: String,
+      enum: ["sent", "delivered", "seen"],
+      default: "sent",
     },
   },
   { timestamps: true }
 );
 
-const Message = mongoose.model("Message", messageShema)
-export default Message
+const Message = mongoose.model("Message", messageShema);
+export default Message;
